@@ -1,0 +1,19 @@
+ canvas{
+ 	border: 3px solid black;
+ 	display: block;
+ 	margin: 0 auto;
+ 	background-color: grey;
+ 	/*background: url(../img/0.png);*/
+ }
+
+
+ .button-container{
+ 	text-align: center;
+ 	margin: 0 auto;
+ 	padding-top: 30px;
+ 	padding-bottom: 30px;
+ }
+
+ button{
+ 	padding: 10px;
+ }
