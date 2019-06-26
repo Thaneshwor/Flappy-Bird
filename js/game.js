@@ -1,6 +1,6 @@
 //Constants
 const UP_VELOCITY = 30;
-const GRAVITY = 0.05;
+const GRAVITY = 0.05;	
 const CANVAS = document.getElementById('board');
 const ctx = CANVAS.getContext('2d');
 
@@ -14,7 +14,7 @@ const pipeSouth = new Image();
 const gameOver = new Image();
 
 //Variable
-var birdX = 10;
+var birdX = 50;
 var birdY = 100;
 var dist = 100;
 var pipeX = CANVAS.width;
@@ -28,8 +28,6 @@ pipes[0] = {
 	x:pipeX, 
 	y:0,
 }
-
-
 
 
 background.src = "img/background-day1.png";
@@ -51,6 +49,8 @@ point.src = 'sound/point.wav';
 hit.src = 'sound/hit.wav';
 swooshing.src = 'sound/swooshing.wav';
 
+
+
 // Writer Score to window
 function writeScore(){
 	ctx.fillStyle = '#fff';
@@ -62,7 +62,7 @@ function writeScore(){
 //Reset game window after game over
 
 function reset(){
-  birdX = 0;
+  birdX = 50;
   birdY = 100;
   dist = 100;
   pipeX = CANVAS.width;
@@ -76,6 +76,8 @@ function reset(){
 	y:0,
   }
 }
+
+
 
 function draw(){
 	ctx.drawImage(background, 0, 0);
@@ -93,11 +95,12 @@ function draw(){
 			pipes[i].x--;
 			
 			// drawImageRot(bird1, birdX, birdY, bird.width, bird.height, 30);
-			var foregroundCrash = birdY + bird.height >= background.height - foreground.height;
-			var inPipeInterval = birdX + bird.width >= pipes[i].x && birdX <= pipes[i].x + pipeNorth.width;
+			var foregroundCrash = isForegroundCrash();
 
-			var upCrash = inPipeInterval && birdY <= pipes[i].y + pipeNorth.height;
-			var downCrash = inPipeInterval && birdY + bird.height >= pipes[i].y + pipeNorth.height + dist;
+			var inPipeInterval = isInPipeInterval(pipes[i].x);
+
+			var upCrash = isUpCrash(inPipeInterval, pipes[i].y);
+			var downCrash = isDownCrash(inPipeInterval, pipes[i].y);
 			
 			// check for bird collide wiht pipe and wall
 			if(foregroundCrash|| upCrash || downCrash){
@@ -107,7 +110,7 @@ function draw(){
 
 			}
 
-			if(pipes[i].x + pipeNorth.width == birdX){
+			if(pipes[i].x + pipeNorth.width+45 == birdX){
 				score++;
 				pipes.shift();
 				if(score > highScore){
@@ -117,11 +120,7 @@ function draw(){
 				point.play();
 			}
 
-			
-
-		}
-
-		
+		}	
 
 	}
 	else{
@@ -129,24 +128,24 @@ function draw(){
 
 	}
 
+
 	// fly up bird when up arrow is pressed
 	document.onkeydown = function(event) {
 	        
-	           if(event.keyCode === 38){	
-	                birdY = birdY- UP_VELOCITY;
+	    if(event.keyCode === 38){	
+	        birdY = birdY - UP_VELOCITY;
 	                // drawImageRot(bird1, birdX, birdY, bird.width, bird.height, 10);
-					fly.play();
-					dy = 0;
-			    }
-			    
-	           
+			fly.play();
+			dy = 0;
+		}
+			            
     };
 
 
 	if(pipes[pipes.length -1].x == 100){
 		pipes.push({
 			x:pipeX,
-			y:Math.floor(pipeNorth.height * Math.random()) - pipeNorth.height+30,
+			y:Math.floor((pipeNorth.height -10) * Math.random()) - pipeNorth.height+30,
 		})
 	}
 	
@@ -154,6 +153,27 @@ function draw(){
 	writeScore();
 	requestAnimationFrame(draw);
 }
+
+function isForegroundCrash(){
+	return  birdY + bird.height >= background.height - foreground.height;
+}
+
+function isUpCrash(inPipeInterval, pipeY){
+	return inPipeInterval && birdY <= pipeY + pipeNorth.height;
+}
+
+
+
+function isDownCrash(inPipeInterval, pipeY){
+	return inPipeInterval && birdY + bird.height >= pipeY + pipeNorth.height + dist;
+}
+
+
+
+function isInPipeInterval(birdXPos){
+	return birdX + bird.width >= birdXPos && birdX <= birdXPos + pipeNorth.width;
+}
+
 
 
 function drawImageRot(img,x,y,width,height,deg){
