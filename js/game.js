@@ -1,6 +1,6 @@
 //Constants
 const UP_VELOCITY = 30;
-const GRAVITY = 9.8;
+const GRAVITY = 0.05;
 const CANVAS = document.getElementById('board');
 const ctx = CANVAS.getContext('2d');
 
@@ -8,12 +8,13 @@ const ctx = CANVAS.getContext('2d');
 const background = new Image();
 const foreground = new Image();
 const bird = new Image();
+
 const pipeNorth = new Image();
 const pipeSouth = new Image();
 const gameOver = new Image();
 
 //Variable
-var birdX = 0;
+var birdX = 10;
 var birdY = 100;
 var dist = 100;
 var pipeX = CANVAS.width;
@@ -21,6 +22,7 @@ var pipes = [];
 var score = 0;
 var highScore = 0;
 var alive = true;
+var dy = 0;
 
 pipes[0] = {
 	x:pipeX, 
@@ -80,13 +82,17 @@ function draw(){
 	
 
 	if(alive){
-		ctx.drawImage(bird, birdX, birdY++);
+		dy += GRAVITY; 
+		birdY = birdY  + dy;
+		ctx.drawImage(bird, birdX, birdY);
+		
+		
 		for(var i = 0; i < pipes.length; i++){
 			ctx.drawImage(pipeNorth, pipes[i].x, pipes[i].y);
 			ctx.drawImage(pipeSouth, pipes[i].x, pipeNorth.height + dist + pipes[i].y );
 			pipes[i].x--;
 			
-			drawImageRot(bird, birdX, birdY, bird.width, bird.height, 30);
+			// drawImageRot(bird1, birdX, birdY, bird.width, bird.height, 30);
 			var foregroundCrash = birdY + bird.height >= background.height - foreground.height;
 			var inPipeInterval = birdX + bird.width >= pipes[i].x && birdX <= pipes[i].x + pipeNorth.width;
 
@@ -115,7 +121,7 @@ function draw(){
 
 		}
 
-
+		
 
 	}
 	else{
@@ -128,8 +134,9 @@ function draw(){
 	        
 	           if(event.keyCode === 38){	
 	                birdY = birdY- UP_VELOCITY;
-	                drawImageRot(bird, birdX, birdY, bird.width, bird.height, 150);
+	                // drawImageRot(bird1, birdX, birdY, bird.width, bird.height, 10);
 					fly.play();
+					dy = 0;
 			    }
 			    
 	           
